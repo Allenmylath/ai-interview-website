@@ -152,43 +152,49 @@ export function ConnectionButton({ onConnectionChange }: ConnectionButtonProps) 
   const isDisabled = isConnecting || isConnectingOrInitializing;
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-col items-center gap-3">
       <Button
         onClick={handleToggleConnection}
         disabled={isDisabled}
-        variant={connected ? "disconnect" : "connect"}
+        variant={connected ? "destructive" : "default"}
         size="lg"
-        className="px-8 py-4 text-lg font-semibold rounded-full shadow-elegant hover:shadow-glow transition-all duration-300"
+        className={`px-8 py-3 text-lg font-semibold rounded-full transition-all duration-300 ${
+          connected 
+            ? "bg-red-600 hover:bg-red-700 text-white" 
+            : "bg-green-600 hover:bg-green-700 text-white"
+        }`}
       >
         {isDisabled ? (
-          <>
-            <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
-            {transportState === "connecting" ? "Connecting..." : 
-             transportState === "ready" ? "Getting Ready..." : 
-             "Initializing..."}
-          </>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+            <span>
+              {transportState === "connecting" ? "Connecting..." : 
+               transportState === "ready" ? "Getting Ready..." : 
+               "Initializing..."}
+            </span>
+          </div>
         ) : connected ? (
-          <>
-            <PhoneOff size={20} />
-            Disconnect
-          </>
+          <div className="flex items-center gap-2">
+            <PhoneOff size={18} />
+            <span>Disconnect</span>
+          </div>
         ) : (
-          <>
-            <Phone size={20} />
-            Connect
-          </>
+          <div className="flex items-center gap-2">
+            <Phone size={18} />
+            <span>Connect</span>
+          </div>
         )}
       </Button>
       
-      <div className="text-center">
+      <div className="text-center space-y-1">
         <p className="text-sm text-muted-foreground">
           {connected 
             ? "Click to end the call" 
             : "Click to start a video call with AI"
           }
         </p>
-        <p className="text-xs text-muted-foreground mt-1">
-          Status: {transportState}
+        <p className="text-xs text-muted-foreground">
+          Status: <span className="font-mono">{transportState}</span>
         </p>
       </div>
     </div>
