@@ -13,15 +13,6 @@ export default function MockInterviewPage() {
         <main className="pt-20">
           {/* Hero Section */}
           <section className="py-12 px-4">
-            <div className="container max-w-6xl mx-auto text-center">
-              <h1 className="text-4xl md:text-5xl font-display font-bold mb-4 tracking-tight">
-                AI Mock Interview
-              </h1>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-8">
-                Practice your interview skills with our advanced AI interviewer. Get real-time feedback 
-                and improve your performance in a realistic interview environment.
-              </p>
-            </div>
           </section>
 
           {/* Video Call App Section */}
