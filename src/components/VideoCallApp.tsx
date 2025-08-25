@@ -14,34 +14,19 @@ export function VideoCallApp() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div className="text-center">
-        <h1 className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-2">
-          Jessica AI Video Bot
-        </h1>
-      </div>
-
-      {/* Main Content */}
-      <div className="flex flex-col lg:flex-row gap-6">
-        {/* Video Section */}
-        <div className="flex flex-col gap-4 lg:flex-1">
-          <VideoConsole isConnected={isConnected} />
-          
-          {/* Connection Controls */}
-          <div className="flex justify-center py-4">
-            <ConnectionButton onConnectionChange={handleConnectionChange} />
-          </div>
-        </div>
-
-        {/* Chat Section */}
-        <div className="lg:w-96">
-          <ChatConsole isConnected={isConnected} />
+      <div>
+        {/* Header */}
+        <div className="text-center">
+          {/* Paragraph removed */}
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="text-center text-sm text-muted-foreground">
-        <p>Click connect to start your AI-powered video call experience</p>
+      {/* Video Console */}
+      <VideoConsole />
+
+      {/* Connection Controls */}
+      <div className="flex justify-center">
+        <ConnectionButton />
       </div>
     </div>
   );
