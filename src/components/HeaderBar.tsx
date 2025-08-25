@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Menu, X, User, Settings, LogOut, Play } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -30,6 +31,7 @@ export default function HeaderBar({ onStartInterview, className }: HeaderBarProp
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const { isSignedIn, user } = useUser()
   const { signOut } = useClerk()
+  const router = useRouter()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -45,8 +47,9 @@ export default function HeaderBar({ onStartInterview, className }: HeaderBarProp
   const handleStartInterview = () => {
     if (onStartInterview) {
       onStartInterview()
-    } else if (isSignedIn) {
-      toast.success('Starting new interview...')
+    } else {
+      // Navigate to mock interview page
+      router.push('/mock-interview')
     }
   }
 
@@ -103,26 +106,14 @@ export default function HeaderBar({ onStartInterview, className }: HeaderBarProp
         {/* Actions */}
         <div className="flex items-center gap-3">
           {/* Start Interview Button */}
-          {isSignedIn ? (
-            <Button
-              size="sm"
-              onClick={handleStartInterview}
-              className="hidden sm:flex items-center gap-2"
-            >
-              <Play className="h-4 w-4" />
-              Start Interview
-            </Button>
-          ) : (
-            <SignUpButton mode="modal">
-              <Button
-                size="sm"
-                className="hidden sm:flex items-center gap-2"
-              >
-                <Play className="h-4 w-4" />
-                Start Interview
-              </Button>
-            </SignUpButton>
-          )}
+          <Button
+            size="sm"
+            onClick={handleStartInterview}
+            className="hidden sm:flex items-center gap-2"
+          >
+            <Play className="h-4 w-4" />
+            Start Interview
+          </Button>
 
           {/* Auth Area */}
           {isSignedIn ? (
@@ -197,28 +188,16 @@ export default function HeaderBar({ onStartInterview, className }: HeaderBarProp
 
                 <div className="border-t pt-6">
                   {/* Mobile Start Interview */}
-                  {isSignedIn ? (
-                    <Button
-                      onClick={() => {
-                        handleStartInterview()
-                        setIsMobileMenuOpen(false)
-                      }}
-                      className="w-full mb-4 flex items-center gap-2"
-                    >
-                      <Play className="h-4 w-4" />
-                      Start Interview
-                    </Button>
-                  ) : (
-                    <SignUpButton mode="modal">
-                      <Button
-                        className="w-full mb-4 flex items-center gap-2"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        <Play className="h-4 w-4" />
-                        Start Interview
-                      </Button>
-                    </SignUpButton>
-                  )}
+                  <Button
+                    onClick={() => {
+                      handleStartInterview()
+                      setIsMobileMenuOpen(false)
+                    }}
+                    className="w-full mb-4 flex items-center gap-2"
+                  >
+                    <Play className="h-4 w-4" />
+                    Start Interview
+                  </Button>
 
                   {/* Mobile Auth */}
                   {isSignedIn ? (
