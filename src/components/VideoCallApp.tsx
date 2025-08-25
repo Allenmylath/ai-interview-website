@@ -1,7 +1,10 @@
+"use client";
+
 import { useState } from "react";
 import { VideoConsole } from "./VideoConsole";
 import { ChatConsole } from "./ChatConsole";
 import { ConnectionButton } from "./ConnectionButton";
+
 export function VideoCallApp() {
   const [isConnected, setIsConnected] = useState(false);
   const handleConnectionChange = (connected: boolean) => {

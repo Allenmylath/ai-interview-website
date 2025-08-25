@@ -1,12 +1,16 @@
+"use client";
+
 import { Card } from "@/components/ui/card";
 import { Video, VideoOff, Mic, MicOff, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePipecatClientCamControl, usePipecatClientMicControl, usePipecatClientMediaDevices, PipecatClientVideo } from "@pipecat-ai/client-react";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useRef, useEffect } from "react";
+
 interface VideoConsoleProps {
   isConnected: boolean;
 }
+
 export function VideoConsole({
   isConnected
 }: VideoConsoleProps) {
