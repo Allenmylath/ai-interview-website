@@ -24,6 +24,9 @@ export function VideoCallApp() {
       {/* Video Console */}
       <VideoConsole />
 
+      {/* Chat Console */}
+      <ChatConsole />
+
       {/* Connection Controls */}
       <div className="flex justify-center">
         <ConnectionButton />
