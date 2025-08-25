@@ -11,10 +11,6 @@ export default function MockInterviewPage() {
         <HeaderBar />
         
         <main className="pt-20">
-          {/* Hero Section */}
-          <section className="py-12 px-4">
-          </section>
-
           {/* Video Call App Section */}
           <section className="px-4 pb-12">
             <div className="container max-w-7xl mx-auto">
