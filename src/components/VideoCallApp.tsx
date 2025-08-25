@@ -21,15 +21,18 @@ export function VideoCallApp() {
         </div>
       </div>
 
-      {/* Video Console */}
-      <VideoConsole />
+      {/* Video and Chat Side by Side */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Video Console */}
+        <VideoConsole isConnected={isConnected} />
 
-      {/* Chat Console */}
-      <ChatConsole />
+        {/* Chat Console */}
+        <ChatConsole />
+      </div>
 
       {/* Connection Controls */}
       <div className="flex justify-center">
-        <ConnectionButton />
+        <ConnectionButton onConnectionChange={handleConnectionChange} />
       </div>
     </div>
   );
