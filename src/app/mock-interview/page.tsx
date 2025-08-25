@@ -1,3 +1,5 @@
+'use client'
+
 import { ClerkProvider } from '@clerk/nextjs'
 import { Toaster } from 'sonner'
 import HeaderBar from '@/components/HeaderBar'
@@ -5,15 +7,11 @@ import FooterLegal from '@/components/FooterLegal'
 import { VideoCallApp } from '@/components/VideoCallApp'
 import { PipecatClient } from "@pipecat-ai/client-js"
 import { PipecatClientProvider, PipecatClientAudio } from "@pipecat-ai/client-react"
+import { DailyTransport } from "@pipecat-ai/daily-transport"
 
-// Create PipecatClient instance
+// Create PipecatClient instance with DailyTransport
 const pipecatClient = new PipecatClient({
-  transport: {
-    create: () => ({
-      // WebSocket transport configuration
-      type: "websocket",
-    }),
-  },
+  transport: new DailyTransport(),
 })
 
 export default function MockInterviewPage() {
