@@ -1,272 +1,190 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { Menu, X, User, Settings, LogOut, Play } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet'
-import { SignInButton, SignUpButton, useUser, useClerk } from '@clerk/nextjs'
-import { toast } from 'sonner'
+import { useState, useCallback } from 'react';
+import { Menu, X, User, LogOut } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 interface HeaderBarProps {
-  onStartInterview?: () => void
-  className?: string
+  isSignedIn?: boolean;
+  userEmail?: string;
+  onStartInterview: () => void;
+  onSignIn?: () => void;
+  onSignOut?: () => void;
 }
 
-export default function HeaderBar({ onStartInterview, className }: HeaderBarProps) {
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const { isSignedIn, user } = useUser()
-  const { signOut } = useClerk()
-  const router = useRouter()
+export const HeaderBar = ({
+  isSignedIn = false,
+  userEmail,
+  onStartInterview,
+  onSignIn,
+  onSignOut
+}: HeaderBarProps) => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0)
-    }
+  const toggleMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen(prev => !prev);
+  }, []);
 
-    if (typeof window !== "undefined") {
-      window.addEventListener('scroll', handleScroll)
-      return () => window.removeEventListener('scroll', handleScroll)
-    }
-  }, [])
+  const closeMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen(false);
+  }, []);
 
-  const handleStartInterview = () => {
-    if (onStartInterview) {
-      onStartInterview()
-    } else {
-      // Navigate to mock interview page
-      router.push('/mock-interview')
-    }
-  }
+  const handleStartInterview = useCallback(() => {
+    onStartInterview();
+    closeMobileMenu();
+  }, [onStartInterview, closeMobileMenu]);
 
-  const handleSignOut = async () => {
-    try {
-      await signOut()
-      toast.success('Signed out successfully')
-      setIsMobileMenuOpen(false)
-    } catch (error) {
-      toast.error('Failed to sign out')
-    }
-  }
+  const handleSignIn = useCallback(() => {
+    onSignIn?.();
+    closeMobileMenu();
+  }, [onSignIn, closeMobileMenu]);
 
-  const navItems = [
-    { label: 'Product', href: '/product' },
-    { label: 'How it works', href: '/how-it-works' },
-    { label: 'Pricing', href: '/pricing' },
-    { label: 'Docs', href: '/docs' },
-  ]
+  const handleSignOut = useCallback(() => {
+    onSignOut?.();
+    closeMobileMenu();
+  }, [onSignOut, closeMobileMenu]);
+
+  const navigationLinks = [
+    { href: '/', label: 'Home' },
+    { href: '/features', label: 'Features' },
+    { href: '/pricing', label: 'Pricing' },
+    { href: '/about', label: 'About' }
+  ];
 
   return (
-    <header
-      className={`sticky top-0 z-50 w-full border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60 transition-shadow duration-200 ${
-        isScrolled ? 'shadow-sm' : ''
-      } ${className || ''}`}
-    >
-      <div className="container flex h-16 items-center justify-between">
-        {/* Brand */}
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground text-sm font-bold font-display">W</span>
-            </div>
-            <span className="text-xl font-bold font-display text-foreground">WhiteKitty</span>
-          </div>
-          <div className="hidden sm:block text-sm text-muted-foreground border-l pl-3 ml-1">
-            AI-powered interview practice
-          </div>
-        </div>
-
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6">
-          {navItems.map((item) => (
-            <a
-              key={item.label}
-              href={item.href}
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {item.label}
-            </a>
-          ))}
-        </nav>
-
-        {/* Actions */}
-        <div className="flex items-center gap-3">
-          {/* Start Interview Button */}
-          <Button
-            size="sm"
-            onClick={handleStartInterview}
-            className="hidden sm:flex items-center gap-2"
+    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <Link 
+            href="/" 
+            className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+            onClick={closeMobileMenu}
           >
-            <Play className="h-4 w-4" />
-            Start Interview
-          </Button>
-
-          {/* Auth Area */}
-          {isSignedIn ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                    <User className="h-4 w-4" />
-                  </div>
-                  <span className="hidden sm:block text-sm font-medium">
-                    {user?.firstName || user?.emailAddresses[0]?.emailAddress}
-                  </span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuItem>
-                  <Settings className="mr-2 h-4 w-4" />
-                  Profile
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <User className="mr-2 h-4 w-4" />
-                  My Interviews
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleSignOut}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Log out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <div className="hidden md:flex items-center gap-3">
-              <SignInButton mode="modal">
-                <Button variant="ghost" size="sm">
-                  Log in
-                </Button>
-              </SignInButton>
-              <SignUpButton mode="modal">
-                <Button size="sm">
-                  Get started
-                </Button>
-              </SignUpButton>
+            <div className="text-2xl font-bold text-primary">
+              WhiteKitty
             </div>
-          )}
+          </Link>
 
-          {/* Mobile Menu */}
-          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="sm" className="md:hidden">
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Open menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-              <SheetHeader>
-                <SheetTitle className="text-left">Menu</SheetTitle>
-              </SheetHeader>
-              <div className="flex flex-col gap-6 mt-8">
-                {/* Mobile Navigation */}
-                <nav className="flex flex-col gap-4">
-                  {navItems.map((item) => (
-                    <a
-                      key={item.label}
-                      href={item.href}
-                      className="text-lg font-medium text-foreground hover:text-muted-foreground transition-colors"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      {item.label}
-                    </a>
-                  ))}
-                </nav>
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-8">
+            {navigationLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-muted-foreground hover:text-foreground transition-colors duration-200 font-medium"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
 
-                <div className="border-t pt-6">
-                  {/* Mobile Start Interview */}
-                  <Button
-                    onClick={() => {
-                      handleStartInterview()
-                      setIsMobileMenuOpen(false)
-                    }}
-                    className="w-full mb-4 flex items-center gap-2"
-                  >
-                    <Play className="h-4 w-4" />
-                    Start Interview
-                  </Button>
+          {/* Desktop Actions */}
+          <div className="hidden md:flex items-center space-x-4">
+            <Button
+              onClick={handleStartInterview}
+              className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-2 transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-xl"
+            >
+              Start Interview
+            </Button>
 
-                  {/* Mobile Auth */}
-                  {isSignedIn ? (
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
-                        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                          <User className="h-5 w-5" />
-                        </div>
-                        <div>
-                          <div className="font-medium">
-                            {user?.firstName || 'User'}
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            {user?.emailAddresses[0]?.emailAddress}
-                          </div>
-                        </div>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        <Settings className="mr-2 h-4 w-4" />
-                        Profile
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        <User className="mr-2 h-4 w-4" />
-                        My Interviews
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start text-destructive hover:text-destructive"
-                        onClick={handleSignOut}
-                      >
-                        <LogOut className="mr-2 h-4 w-4" />
-                        Log out
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      <SignUpButton mode="modal">
-                        <Button
-                          className="w-full"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                          Get started
-                        </Button>
-                      </SignUpButton>
-                      <SignInButton mode="modal">
-                        <Button
-                          variant="ghost"
-                          className="w-full"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                          Log in
-                        </Button>
-                      </SignInButton>
-                    </div>
-                  )}
+            {isSignedIn ? (
+              <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                  <User className="h-4 w-4" />
+                  <span className="truncate max-w-32">{userEmail}</span>
                 </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSignOut}
+                  className="flex items-center space-x-2"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>Sign Out</span>
+                </Button>
               </div>
-            </SheetContent>
-          </Sheet>
+            ) : (
+              <Button
+                variant="outline"
+                onClick={handleSignIn}
+                className="font-medium"
+              >
+                Sign In
+              </Button>
+            )}
+          </div>
+
+          {/* Mobile Menu Button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="md:hidden"
+            onClick={toggleMobileMenu}
+            aria-label="Toggle menu"
+          >
+            {isMobileMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
+          </Button>
         </div>
+
+        {/* Mobile Navigation */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden border-t border-border bg-background">
+            <nav className="py-4 space-y-4">
+              {navigationLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all duration-200 rounded-md mx-2 font-medium"
+                  onClick={closeMobileMenu}
+                >
+                  {link.label}
+                </Link>
+              ))}
+              
+              <div className="px-4 pt-4 border-t border-border space-y-4">
+                <Button
+                  onClick={handleStartInterview}
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 transition-all duration-200 shadow-lg hover:shadow-xl"
+                  size="lg"
+                >
+                  Start Interview
+                </Button>
+
+                {isSignedIn ? (
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-2 text-sm text-muted-foreground px-2">
+                      <User className="h-4 w-4" />
+                      <span className="truncate">{userEmail}</span>
+                    </div>
+                    <Button
+                      variant="outline"
+                      onClick={handleSignOut}
+                      className="w-full flex items-center justify-center space-x-2"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      <span>Sign Out</span>
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    variant="outline"
+                    onClick={handleSignIn}
+                    className="w-full font-medium"
+                  >
+                    Sign In
+                  </Button>
+                )}
+              </div>
+            </nav>
+          </div>
+        )}
       </div>
     </header>
-  )
-}
+  );
+};

@@ -1,161 +1,221 @@
-"use client"
+import React from "react";
+import { Badge } from "@/components/ui/badge";
+import { Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram, Youtube } from "lucide-react";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Mail, Shield, Globe } from "lucide-react"
-import { toast } from "sonner"
-
-interface FooterLegalProps {
-  className?: string
-  logoText?: string
-  tagline?: string
-  year?: number
-  links?: Array<{ label: string; href: string }>
-  badges?: Array<{ label: string; variant?: "default" | "secondary" }>
-  region?: "EU" | "US" | "EU/US"
+interface Link {
+  label: string;
+  href: string;
 }
 
-export default function FooterLegal({
-  className = "",
-  logoText = "WhiteKitty",
-  tagline = "Beautiful, fast, and secure web solutions",
-  year = new Date().getFullYear(),
-  links = [
-    { label: "Docs", href: "/docs" },
-    { label: "Pricing", href: "/pricing" },
-    { label: "Privacy", href: "/privacy" },
-    { label: "Terms", href: "/terms" },
-    { label: "Contact", href: "/contact" }
-  ],
-  badges = [
-    { label: "GDPR Compliant", variant: "secondary" as const },
-    { label: "SOC 2 Type II", variant: "default" as const }
-  ],
-  region = "EU/US"
-}: FooterLegalProps) {
-  const [email, setEmail] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+interface BadgeInfo {
+  label: string;
+  variant?: "default" | "secondary" | "destructive" | "outline";
+}
 
-  const handleNewsletterSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      toast.error("Please enter a valid email address")
-      return
-    }
+interface SocialLink {
+  platform: 'facebook' | 'twitter' | 'linkedin' | 'instagram' | 'youtube';
+  href: string;
+}
 
-    setIsLoading(true)
-    
-    try {
-      // Mock API call - replace with actual endpoint
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      toast.success("Successfully subscribed to newsletter!")
-      setEmail("")
-    } catch (error) {
-      toast.error("Failed to subscribe. Please try again.")
-    } finally {
-      setIsLoading(false)
-    }
+interface ContactInfo {
+  email?: string;
+  phone?: string;
+  address?: string;
+}
+
+interface FooterLegalProps {
+  logoText: string;
+  tagline: string;
+  links: Link[];
+  badges?: BadgeInfo[];
+  socialLinks?: SocialLink[];
+  contactInfo?: ContactInfo;
+  companyName?: string;
+  legalText?: string;
+}
+
+const getSocialIcon = (platform: SocialLink['platform']) => {
+  const iconProps = { size: 18, className: "transition-colors duration-200" };
+  
+  switch (platform) {
+    case 'facebook':
+      return <Facebook {...iconProps} />;
+    case 'twitter':
+      return <Twitter {...iconProps} />;
+    case 'linkedin':
+      return <Linkedin {...iconProps} />;
+    case 'instagram':
+      return <Instagram {...iconProps} />;
+    case 'youtube':
+      return <Youtube {...iconProps} />;
+    default:
+      return null;
   }
+};
+
+export const FooterLegal: React.FC<FooterLegalProps> = ({
+  logoText,
+  tagline,
+  links = [],
+  badges = [],
+  socialLinks = [],
+  contactInfo,
+  companyName,
+  legalText = "All rights reserved."
+}) => {
+  const currentYear = new Date().getFullYear();
 
   return (
-    <footer className={`bg-card border-t border-border py-12 ${className}`}>
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
-          {/* Left Column - Logo & Info */}
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <h3 className="text-xl font-display font-bold text-foreground">
-                {logoText}
-              </h3>
-              <p className="text-sm text-muted-foreground max-w-xs">
-                {tagline}
+    <footer className="bg-background border-t border-border">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Main Footer Content */}
+        <div className="py-12 lg:py-16">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+            {/* Logo and Company Info */}
+            <div className="lg:col-span-4 space-y-6">
+              <div>
+                <h3 className="text-2xl font-bold text-foreground mb-2">
+                  {logoText}
+                </h3>
+                <p className="text-muted-foreground text-sm leading-relaxed max-w-md">
+                  {tagline}
+                </p>
+              </div>
+
+              {/* Contact Information */}
+              {contactInfo && (
+                <div className="space-y-3">
+                  <h4 className="text-sm font-semibold text-foreground uppercase tracking-wider">
+                    Contact
+                  </h4>
+                  <div className="space-y-2">
+                    {contactInfo.email && (
+                      <div className="flex items-center gap-3 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                        <Mail size={16} />
+                        <a href={`mailto:${contactInfo.email}`} className="hover:underline">
+                          {contactInfo.email}
+                        </a>
+                      </div>
+                    )}
+                    {contactInfo.phone && (
+                      <div className="flex items-center gap-3 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                        <Phone size={16} />
+                        <a href={`tel:${contactInfo.phone}`} className="hover:underline">
+                          {contactInfo.phone}
+                        </a>
+                      </div>
+                    )}
+                    {contactInfo.address && (
+                      <div className="flex items-start gap-3 text-sm text-muted-foreground">
+                        <MapPin size={16} className="mt-0.5 flex-shrink-0" />
+                        <span>{contactInfo.address}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Social Links */}
+              {socialLinks && socialLinks.length > 0 && (
+                <div className="space-y-3">
+                  <h4 className="text-sm font-semibold text-foreground uppercase tracking-wider">
+                    Follow Us
+                  </h4>
+                  <div className="flex gap-3">
+                    {socialLinks.map((social, index) => (
+                      <a
+                        key={index}
+                        href={social.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 rounded-md bg-muted hover:bg-accent text-muted-foreground hover:text-accent-foreground transition-all duration-200 hover:scale-105"
+                      >
+                        {getSocialIcon(social.platform)}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Navigation Links */}
+            <div className="lg:col-span-6">
+              {links && links.length > 0 && (
+                <div className="space-y-4">
+                  <h4 className="text-sm font-semibold text-foreground uppercase tracking-wider">
+                    Quick Links
+                  </h4>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-3">
+                    {links.map((link, index) => (
+                      <a
+                        key={index}
+                        href={link.href}
+                        className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 hover:underline"
+                      >
+                        {link.label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Badges */}
+            {badges && badges.length > 0 && (
+              <div className="lg:col-span-2">
+                <div className="space-y-4">
+                  <h4 className="text-sm font-semibold text-foreground uppercase tracking-wider">
+                    Certifications
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {badges.map((badge, index) => (
+                      <Badge
+                        key={index}
+                        variant={badge.variant || "secondary"}
+                        className="text-xs px-2 py-1 bg-muted/50 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+                      >
+                        {badge.label}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="border-t border-border py-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="text-sm text-muted-foreground">
+              <p>
+                © {currentYear} {companyName || logoText}. {legalText}
               </p>
             </div>
-            <p className="text-xs text-muted-foreground">
-              © {year} {logoText}. All rights reserved.
-            </p>
-          </div>
-
-          {/* Middle Column - Quick Links */}
-          <div className="space-y-4">
-            <h4 className="text-sm font-display font-semibold text-foreground">
-              Quick Links
-            </h4>
-            <nav className="flex flex-wrap gap-4 lg:flex-col lg:gap-3">
-              {links.map((link, index) => (
-                <a
-                  key={index}
-                  href={link.href}
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-sm"
-                >
-                  {link.label}
-                </a>
-              ))}
-            </nav>
-          </div>
-
-          {/* Right Column - Badges & Newsletter */}
-          <div className="space-y-6">
-            {/* Compliance Badges */}
-            <div className="space-y-3">
-              <h4 className="text-sm font-display font-semibold text-foreground">
-                Security & Compliance
-              </h4>
-              <div className="flex flex-wrap gap-2">
-                {badges.map((badge, index) => (
-                  <Badge 
-                    key={index} 
-                    variant={badge.variant}
-                    className="text-xs"
-                  >
-                    <Shield className="w-3 h-3 mr-1" />
-                    {badge.label}
-                  </Badge>
-                ))}
-                <Badge variant="outline" className="text-xs">
-                  <Globe className="w-3 h-3 mr-1" />
-                  Hosted in {region}
-                </Badge>
-              </div>
-            </div>
-
-            {/* Newsletter Signup */}
-            <div className="space-y-3">
-              <h4 className="text-sm font-display font-semibold text-foreground">
-                Stay Updated
-              </h4>
-              <form onSubmit={handleNewsletterSubmit} className="space-y-3">
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <Input
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="text-sm flex-1"
-                    disabled={isLoading}
-                  />
-                  <Button 
-                    type="submit" 
-                    size="sm" 
-                    disabled={isLoading}
-                    className="shrink-0"
-                  >
-                    <Mail className="w-4 h-4 mr-1" />
-                    {isLoading ? "..." : "Subscribe"}
-                  </Button>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Get updates on new features and releases.
-                </p>
-              </form>
+            
+            <div className="flex flex-wrap gap-6 text-sm">
+              <a
+                href="/privacy"
+                className="text-muted-foreground hover:text-foreground transition-colors hover:underline"
+              >
+                Privacy Policy
+              </a>
+              <a
+                href="/terms"
+                className="text-muted-foreground hover:text-foreground transition-colors hover:underline"
+              >
+                Terms of Service
+              </a>
+              <a
+                href="/cookies"
+                className="text-muted-foreground hover:text-foreground transition-colors hover:underline"
+              >
+                Cookie Policy
+              </a>
             </div>
           </div>
         </div>
       </div>
     </footer>
-  )
-}
+  );
+};
