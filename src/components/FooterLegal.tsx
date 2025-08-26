@@ -30,7 +30,7 @@ interface FooterLegalProps {
   badges?: BadgeInfo[];
   socialLinks?: SocialLink[];
   contactInfo?: ContactInfo;
-  companyName?: string;
+  companyName?: String;
   legalText?: string;
 }
 
@@ -68,10 +68,8 @@ export const FooterLegal: React.FC<FooterLegalProps> = ({
   return (
     <footer className="bg-background border-t border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Main Footer Content */}
         <div className="py-12 lg:py-16">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-            {/* Logo and Company Info */}
             <div className="lg:col-span-4 space-y-6">
               <div>
                 <h3 className="text-2xl font-bold text-foreground mb-2">
@@ -82,7 +80,6 @@ export const FooterLegal: React.FC<FooterLegalProps> = ({
                 </p>
               </div>
 
-              {/* Contact Information */}
               {contactInfo && (
                 <div className="space-y-3">
                   <h4 className="text-sm font-semibold text-foreground uppercase tracking-wider">
@@ -115,7 +112,6 @@ export const FooterLegal: React.FC<FooterLegalProps> = ({
                 </div>
               )}
 
-              {/* Social Links */}
               {socialLinks && socialLinks.length > 0 && (
                 <div className="space-y-3">
                   <h4 className="text-sm font-semibold text-foreground uppercase tracking-wider">
@@ -138,7 +134,6 @@ export const FooterLegal: React.FC<FooterLegalProps> = ({
               )}
             </div>
 
-            {/* Navigation Links */}
             <div className="lg:col-span-6">
               {links && links.length > 0 && (
                 <div className="space-y-4">
@@ -160,7 +155,6 @@ export const FooterLegal: React.FC<FooterLegalProps> = ({
               )}
             </div>
 
-            {/* Badges */}
             {badges && badges.length > 0 && (
               <div className="lg:col-span-2">
                 <div className="space-y-4">
@@ -179,12 +173,11 @@ export const FooterLegal: React.FC<FooterLegalProps> = ({
                     ))}
                   </div>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Bottom Bar */}
         <div className="border-t border-border py-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="text-sm text-muted-foreground">
