@@ -40,19 +40,15 @@ function MainApp() {
   // Event listeners for view switching
   useEffect(() => {
     const handleStartInterview = (event: CustomEvent) => {
-      if (isSignedIn) {
-        setCandidateInfo(event.detail?.candidateInfo || null)
-        setCurrentView('interview')
-        toast.success('Starting interview...')
-      } else {
-        toast.error('Please sign in to start an interview')
-      }
+      // Open mock-interview page in new window
+      window.open('/mock-interview', '_blank')
+      toast.success('Opening interview in new window...')
     }
 
     const handleStartDemo = () => {
-      setCandidateInfo({ name: 'Demo Candidate', email: 'demo@example.com' })
-      setCurrentView('interview')
-      toast.success('Demo interview started')
+      // Open mock-interview page in new window for demo
+      window.open('/mock-interview', '_blank')
+      toast.success('Opening demo interview in new window...')
     }
 
     const handleOpenReadonly = (event: CustomEvent) => {
@@ -71,12 +67,11 @@ function MainApp() {
         document.removeEventListener('open-interview-readonly', handleOpenReadonly as EventListener)
       }
     }
-  }, [isSignedIn])
+  }, [])
 
   const handleStartInterview = () => {
-    if (isSignedIn) {
-      setCurrentView('interview')
-    }
+    // Open mock-interview page in new window
+    window.open('/mock-interview', '_blank')
   }
 
   const handleViewDashboard = () => {
