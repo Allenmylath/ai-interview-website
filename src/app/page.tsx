@@ -1,9 +1,8 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { ClerkProvider, useUser } from '@clerk/nextjs'
+import { useUser } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
-import { Toaster } from 'sonner'
 import { HeaderBar } from '@/components/HeaderBar'
 import { HeroQuickStart } from '@/components/HeroQuickStart'
 import { InterviewStudio } from '@/components/InterviewStudio'
@@ -19,7 +18,7 @@ interface CandidateInfo {
   email: string
 }
 
-function MainApp() {
+export default function HomePage() {
   const { isSignedIn, user } = useUser()
   const router = useRouter()
   const [currentView, setCurrentView] = useState<ViewMode>('hero')
@@ -149,14 +148,5 @@ function MainApp() {
         ]}
       />
     </div>
-  )
-}
-
-export default function HomePage() {
-  return (
-    <ClerkProvider>
-      <MainApp />
-      <Toaster />
-    </ClerkProvider>
   )
 }
