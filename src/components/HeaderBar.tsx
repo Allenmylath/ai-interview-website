@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { Menu, X, User, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -21,6 +22,7 @@ export const HeaderBar = ({
   onSignOut
 }: HeaderBarProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const router = useRouter();
 
   const toggleMobileMenu = useCallback(() => {
     setIsMobileMenuOpen(prev => !prev);
@@ -36,9 +38,9 @@ export const HeaderBar = ({
   }, [onStartInterview, closeMobileMenu]);
 
   const handleSignIn = useCallback(() => {
-    onSignIn?.();
+    router.push('/login');
     closeMobileMenu();
-  }, [onSignIn, closeMobileMenu]);
+  }, [router, closeMobileMenu]);
 
   const handleSignOut = useCallback(() => {
     onSignOut?.();
